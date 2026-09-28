@@ -1,0 +1,31 @@
+{
+  "name": "ta-vp",
+  "version": "1.0.0",
+  "description": "Veebiprogrammeerimise tundides tehtud veeb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://johanomb@github.com/johanomb/TA-vp.git"
+  },
+  "keywords": [
+    "Node.Js",
+    "veeb",
+    "Tallinna",
+    "Ülikool",
+    "DTI",
+    "üliõpilane",
+    "koolitöö"
+  ],
+  "author": "Johanna Nomberg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johanomb/TA-vp/issues"
+  },
+  "homepage": "https://github.com/johanomb/TA-vp#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

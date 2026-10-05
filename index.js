@@ -119,6 +119,32 @@ app.get('/eestifilm/inimesed', async (req, res)=>{
 	}
 });
 
+app.get('/eestifilm/filmid', async (req, res)=>{
+	//console.log('Anmebaasiserver on: ' + process.env.DB_HOST);
+	let conn;
+	try {
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		const sqlReq = 'SELECT * FROM movie ORDER by title';
+		const [sqlRes] = await conn.execute(sqlReq);
+		console.log(sqlRes);
+		res.render('eestifilmid', {movieList: sqlRes});
+	}
+	catch (err){
+		console.log('Viga andmebaasist lugemisel: ' + err);
+		res.render('eestifilmid', {movieList: []});
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
+	}
+});
+
 //mul on eestifilminimesed_add, muidu oleks eestifilmiinimesed_add!
 app.get('/eestifilm/inimesed_add', (req, res)=>{
 	res.render('eestifilminimesed_add', {notice: 'Ootan sisestust!'});

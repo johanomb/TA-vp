@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Johanna Nomberg, veebiprogrammeerimine</title>
+</head>
+<body>
+	<img src="pic/veebiprogrammeerimine_2026_TA.png" alt="">	
+	<h1>Eesti filmid</h1>
+	<p>Siin lehel saab andmebaasi lisada Eesti filme.</p>
+	<hr>	
+	<ul>
+		<li><a href="/">Avalehele</a></li>
+		<li><a href="/eestifilm">Eesti filmi avaleht</a></li>
+	</ul>
+	<hr>
+	<form method="POST">
+		<label for="titleInput">Filmi pealkiri</label>
+		<input id="titleInput" name="titleInput" type="text" placeholder="Pealkiri ..." required>
+		<br>
+		<label for="releaseYearInput">Filmi ilmumisaasta</label>
+		<input id="releaseYearInput" name="releaseYearInput" type="text" placeholder="Ilmumisaasta ..." required>
+		<br>
+		<label for="durationMinutesInput">Filmi kestus</label>
+		<input id="durationMinutesInput" name="durationMinutesInput" type="text" placeholder="Kestus minutites ..." required>
+		<br>
+		<label for="descriptionInput">Filmi žanr</label>
+		<input id="descriptionInput" name="descriptionInput" type="text" placeholder="Žanr ..." required>
+		<br>
+		<input id="movieSubmit" name="movieSubmit" type="submit" value="salvesta">
+	</form>
+	<p><%= notice %>
+</body>
+</html>

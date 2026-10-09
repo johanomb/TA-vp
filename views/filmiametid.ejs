@@ -6,8 +6,8 @@
 </head>
 <body>
 	<img src="pic/veebiprogrammeerimine_2026_TA.png" alt="">	
-	<h1>Eesti filmid</h1>
-	<p>Siin lehel on näha Eesti filme.</p>
+	<h1>Filmi ametid</h1>
+	<p>Siin lehel on näha filmidega seoses ameteid.</p>
 	<hr>	
 	<ul>
 		<li><a href="/">Avalehele</a></li>
@@ -15,8 +15,8 @@
 	</ul>
 	<hr>
 	<ol>
-		<% movieList.forEach(function(movie){%>
-		<li><%= movie.title %>, <%= movie.release_year %>. aastal ilmunud, kestus on <%=movie.duration_minutes %> minutit.</li>
+		<% professionList.forEach(function(profession){%>
+		<li><%= profession.title %>, <%= profession.description %></li>
 		<% }); %>
 	</ol>
 </body>

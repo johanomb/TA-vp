@@ -135,15 +135,32 @@ app.get('/eestifilm/inimesed', async (req, res)=>{
 
 //mul on eestifilminimesed_add, muidu oleks eestifilmiinimesed_add!
 app.get('/eestifilm/inimesed_add', (req, res)=>{
-	res.render('eestifilminimesed_add', {notice: 'Ootan sisestust!'});
+	res.render('eestifilminimesed_add', {
+		notice: 'Ootan sisestust!',
+		firstNameInput: '',
+		lastNameInput: '',
+		bornInput: '',
+		deceasedInput: ''
+		});
 });
 
 app.post('/eestifilm/inimesed_add', async (req, res)=>{
 	console.log(req.body);
 	//kontrollime andmete olemasolu
-	if(!req.body.firstNameInput || !req.body.lastNameInput || !req.body.bornInput || req.body.bornInput >= new Date()){
+	
+	const now = new Date(); // fikseerib praeguse hetke
+	const bornDate = new Date(req.body.bornInput); // teeb sisestatud kuupäevast ajaobjekti
+	const deceasedDate = new Date(req.body.deceasedInput);
+	
+	if(!req.body.firstNameInput || !req.body.lastNameInput || isNaN(bornDate.getTime()) || bornDate > now || (req.body.deceasedInput && (isNaN(deceasedDate.getTime()) || deceasedDate < bornDate || deceasedDate > now))){
 		console.log('Andmed pole korrektsed');
-		return res.render('eestifilminimesed_add', {notice: 'Andmed on puudulikud!'});
+		return res.render('eestifilminimesed_add', {
+			notice: 'Andmed on puudulikud!',
+			firstNameInput: req.body.firstNameInput || '',
+			lastNameInput: req.body.lastNameInput || '',
+			bornInput: req.body.bornInput || '',
+			deceasedInput: req.body.deceasedInput || ''
+			});
 	}
 	let conn;
 	try {
@@ -164,18 +181,30 @@ app.post('/eestifilm/inimesed_add', async (req, res)=>{
 			req.body.bornInput,
 			deceasedDate
 		]);
-		res.render('eestifilminimesed_add', {notice: 'Andmed salvestati, ootan uut sisestust!'});
+		res.render('eestifilminimesed_add', {
+			notice: 'Andmed salvestati, ootan uut sisestust!',
+			firstNameInput: '',
+			lastNameInput: '',
+			bornInput: '',
+			deceasedInput: ''
+			});
 	}
 	catch (err){
 		console.log('Viga andmebaasiga suhtlemisel: ' + err);
-		res.render('eestifilminimesed_add', {notice: 'Tekkis viga, andmeid ei salvestatud!'});
+		res.render('eestifilminimesed_add', {
+			notice: 'Tekkis viga, andmeid ei salvestatud!',
+			firstNameInput: req.body.firstNameInput || '',
+            lastNameInput: req.body.lastNameInput || '',
+            bornInput: req.body.bornInput || '',
+            deceasedInput: req.body.deceasedInput || ''
+			});
 	}
 	finally {
 		if(conn){
 			await conn.end();
 		}
 	}
-});
+}); //siin lõppes inimesed_add
 
 app.get('/eestifilm/filmid', async (req, res)=>{
 	//console.log('Anmebaasiserver on: ' + process.env.DB_HOST);
@@ -204,14 +233,26 @@ app.get('/eestifilm/filmid', async (req, res)=>{
 });
 
 app.get('/eestifilm/filmid_add', (req, res)=>{
-	res.render('eestifilmid_add', {notice: 'Ootan sisestust!'});
+	res.render('eestifilmid_add', {
+		notice: 'Ootan sisestust!',
+		titleInput: '',
+		releaseYearInput: '',
+		durationMinutesInput: '',
+		descriptionInput: ''
+		});
 });
 
 app.post('/eestifilm/filmid_add', async (req, res)=>{
 	console.log(req.body);
 	if(!req.body.titleInput || !req.body.durationMinutesInput || req.body.releaseYearInput >= new Date().getFullYear()){
 		console.log('Andmed pole korrektsed');
-		return res.render('eestifilmid_add', {notice: 'Andmed on puudulikud!'});
+		return res.render('eestifilmid_add', {
+			notice: 'Andmed on puudulikud!',
+			titleInput: req.body.titleInput || '',
+			releaseYearInput: req.body.releaseYearInput || '',
+			durationMinutesInput: req.body.durationMinutesInput || '',
+			descriptionInput: req.body.descriptionInput || ''
+			});
 	}
 	let conn;
 	try {
@@ -228,11 +269,85 @@ app.post('/eestifilm/filmid_add', async (req, res)=>{
 			req.body.durationMinutesInput,
 			req.body.descriptionInput
 		]);
-		res.render('eestifilmid_add', {notice: 'Andmed salvestati, ootan uut sisestust!'});
+		res.render('eestifilmid_add', {
+			notice: 'Andmed salvestati, ootan uut sisestust!',
+			titleInput: '',
+            releaseYearInput: '',
+            durationMinutesInput: '',
+            descriptionInput: ''
+			});
 	}
 	catch (err){
 		console.log('Viga andmebaasiga suhtlemisel: ' + err);
-		res.render('eestifilmid_add', {notice: 'Tekkis viga, andmeid ei salvestatud!'});
+		res.render('eestifilmid_add', {
+			notice: 'Tekkis viga, andmeid ei salvestatud!',
+			titleInput: req.body.titleInput || '',
+			releaseYearInput: req.body.releaseYearInput || '',
+			durationMinutesInput: req.body.durationMinutesInput || '',
+			descriptionInput: req.body.descriptionInput || ''
+			});
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
+	}
+}); //siin lõppes filmid_add
+
+app.get('/eestifilm/filmiametid', async (req, res)=>{
+	//console.log('Anmebaasiserver on: ' + process.env.DB_HOST);
+	let conn;
+	try {
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		const sqlReq = 'SELECT * FROM profession ORDER by title';
+		const [sqlRes] = await conn.execute(sqlReq);
+		console.log(sqlRes);
+		res.render('filmiametid', {professionList: sqlRes});
+	}
+	catch (err){
+		console.log('Viga andmebaasist lugemisel: ' + err);
+		res.render('filmiametid', {professionList: []});
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
+	}
+});
+
+app.get('/eestifilm/filmiametid_add', (req, res)=>{
+	res.render('filmiametid_add', {notice: 'Ootan sisestust!'});
+});
+
+app.post('/eestifilm/filmiametid_add', async (req, res)=>{
+	console.log(req.body);
+	if(!req.body.titleInput || !req.body.descriptionInput){
+		console.log('Andmed pole korrektsed');
+		return res.render('filmiametid_add', {notice: 'Andmed on puudulikud!'});
+	}
+	let conn;
+	try {
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		let sqlReq = 'INSERT INTO profession (title, description) VALUES (?, ?)';
+		await conn.execute(sqlReq, [
+			req.body.titleInput,
+			req.body.descriptionInput
+		]);
+		res.render('filmiametid_add', {notice: 'Andmed salvestati, ootan uut sisestust!'});
+	}
+	catch (err){
+		console.log('Viga andmebaasiga suhtlemisel: ' + err);
+		res.render('filmiametid_add', {notice: 'Tekkis viga, andmeid ei salvestatud!'});
 	}
 	finally {
 		if(conn){

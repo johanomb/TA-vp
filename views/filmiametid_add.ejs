@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Johanna Nomberg, veebiprogrammeerimine</title>
+</head>
+<body>
+	<img src="pic/veebiprogrammeerimine_2026_TA.png" alt="">	
+	<h1>Filmi ametid</h1>
+	<p>Siin lehel saab andmebaasi lisada filmidega seoses ameteid.</p>
+	<hr>	
+	<ul>
+		<li><a href="/">Avalehele</a></li>
+		<li><a href="/eestifilm">Eesti filmi avaleht</a></li>
+	</ul>
+	<hr>
+	<form method="POST">
+		<label for="titleInput">Filmiga seotud amet</label>
+		<input id="titleInput" name="titleInput" type="text" placeholder="Ameti nimi ..." required>
+		<br>
+		<label for="descriptionInput">Ameti kirjeldus</label>
+		<input id="descriptionInput" name="descriptionInput" type="text" placeholder="Lühikirjeldus ..." required>
+		<br>
+		<input id="professionSubmit" name="professionSubmit" type="submit" value="salvesta">
+	</form>
+	<p><%= notice %>
+</body>
+</html>

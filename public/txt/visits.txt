@@ -4,3 +4,7 @@ Johanna, teisipäev, 6. oktoober 2026, kell 07:51:55;
 Johanna, teisipäev, 6. oktoober 2026, kell 08:04:40;
 Test, teisipäev, 6. oktoober 2026, kell 08:04:55;
 Johanna, teisipäev, 6. oktoober 2026, kell 08:05:06;
+Johanna, teisipäev, 6. oktoober 2026, kell 08:46:17;
+Johanna, teisipäev, 6. oktoober 2026, kell 14:56:04;
+Johanna, reede, 9. oktoober 2026, kell 17:30:53;
+Johanna, reede, 9. oktoober 2026, kell 19:15:15;

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Johanna Nomberg, veebiprogrammeerimine</title>
+</head>
+<body>
+	<img src="../pic/veebiprogrammeerimine_2026_TA.png" alt="">	
+	<h1>Eesti inimesed filmides</h1>
+	<p>Siin lehel on näha Eesti filmiinimesi ning mis filmides nad olid.</p>
+	<hr>
+	<ul>
+		<li><a href="/">Avalehele</a></li>
+		<li><a href="/eestifilm">Eesti filmi avaleht</a></li>
+	</ul>
+	<hr>
+	<ol>
+	<form method="POST">
+		<label>Inimene:</label>
+		<select name="person_id" required>
+			<option selected disabled value="">Vali inimene</option>
+			<% person.forEach(function(person) { %>
+				<option value="<%= person.id %>"> <%= person.first_name %> <%= person.last_name %> </option>
+			<% }); %>
+		</select>
+		
+		<label>Film:</label>
+		<select name="movie_id" required>
+			<option selected disabled value="">Vali film</option>
+			<% movie.forEach(function(movie) { %>
+				<option value="<%= movie.id %>"> <%= movie.title %> </option>
+			<% }); %>
+		</select>
+		
+		<label>Amet:</label>
+		<select name="profession_id" required>
+			<option selected disabled value="">Vali amet</option>
+			<% profession.forEach(function(profession) { %>
+				<option value="<%= profession.id %>"> <%= profession.title %> </option>
+			<% }); %>
+		</select>
+		
+		<label>Tegelaskuju nimi (näitlejale):</label>
+		<input type="text" name="character_name">
+		
+		<button type="submit">Salvesta seos</button>
+	</form>
+	</ol>	
+	
+	<h1>Olemasolevad seosed</h1>
+	<ol>
+		<% seosed.forEach(function(s) { %>
+        <li>
+            <%= s.first_name %> <%= s.last_name %> -
+            <%= s.movie_title %> -
+            <%= s.profession_title %>
+            <% if (s.character_name) { %>
+                (tegelaskuju: <%= s.character_name %>)
+            <% } %>
+		</li>
+		<% }); %>
+	</ol>
+	<hr>
+	<p><%= notice %></p>
+</body>
+</html>

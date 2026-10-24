@@ -17,7 +17,7 @@ const app = express();
 app.set('view engine', 'ejs');
 //määran ühe päris kataloogi virtuaalses serveris kättesaadavaks
 app.use(express.static('public'));
-app.use(bodyparser.urlencoded({extended: false}));
+app.use(bodyparser.urlencoded({extended: true})); //kui vormidest ainult tekst, siis "false"
 app.use(express.urlencoded({extended: true }));
 
 //loon andmebaasiühenduse, connectioni
@@ -29,12 +29,34 @@ app.use(express.urlencoded({extended: true }));
 //});
 
 //marsruudid
-app.get('/', (req, res)=>{
+app.get('/', async (req, res)=>{
 	//res.send('Express.js läks käima ja serveerib meile veebi.');
 	//const dayNow = dateET.day();
 	const dateNow = dateET.fullDate();
 	const timeNow = dateET.fullTime();
-	res.render('index', {dateNow: dateNow, timeNow: timeNow}); //ei pea lisama .ejs indexile
+	let conn;
+	try {
+		conn = await mysql.createConnection({
+				host: process.env.DB_HOST,
+				user: process.env.DB_USER,
+				password: process.env.DB_PASS,
+				database: process.env.DB_NAME
+		});
+		let sqlReq = 'SELECT file_name, alt_text FROM galleryphotos WHERE id = (SELECT MAX(id) FROM galleryphotos WHERE privacy = ? AND deleted IS NULL)';
+		const [rows] = await conn.execute(sqlReq, [3]);
+		//console.log('Leitud avalik foto:', rows);
+		const latestPublicPhoto = rows[0];
+		res.render('index', {dateNow: dateNow, timeNow: timeNow, latestPublicPhoto: latestPublicPhoto});
+	}
+	catch (err) {
+		console.log('Viga: ' + err);
+		res.render('index');
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
+	}
 });
 
 app.get('/vanasona', async (req, res)=>{
@@ -64,5 +86,12 @@ app.use('/regvisit', külastusRouter);
 //Eesti filmi marsruudid
 const eestifilmRouter = require('./routes/eestifilmRoutes');
 app.use('/eestifilm', eestifilmRouter);
+
+//Galeriipiltide üleslaadimine
+const galleryPhotoUploadRouter = require('./routes/galleryPhotoUploadRoutes')
+app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
+
+const fotogaleriiRouter = require('./routes/fotogaleriiRoutes')
+app.use('/fotogalerii', fotogaleriiRouter);
 
 app.listen(5111);

@@ -16,6 +16,13 @@
 		<li><a href="/marsruut">Uus marsruut!</a></li>
 		<li><a href="/regvisit">Külastuse registreerimine</a></li>
 		<li><a href="/eestifilm">Eesti film</a></li>
+		<li><a href="/galleryPhotoUpload">Galeriipiltide üleslaadimine</a></li>
+		<li><a href="/fotogalerii">Fotogalerii pildid</a></li>
 	</ul>
+	<hr>
+	<% if (latestPublicPhoto) { %>
+		<img src="./gallery/normal/<%= latestPublicPhoto.file_name %>" alt="<%= latestPublicPhoto.alt_text %>">
+	<p><%= latestPublicPhoto.alt_text || 'Uusim avalik foto' %></p>
+	<% } %>
 </body>
 </html>

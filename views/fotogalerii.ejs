@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Johanna Nomberg, veebiprogrammeerimine</title>
+</head>
+<body>
+	<img src="../pic/veebiprogrammeerimine_2026_TA.png" alt="">	
+	<h1>Fotogalerii</h1>
+	<p>Siin on näha avalikult salvestatud fotosid.</p>
+	<hr>	
+	<ul>
+		<li><a href="/">Avalehele</a></li>
+	</ul>
+	<hr>
+	<% if (photos.length > 0) { %>
+		<% photos.forEach(photo => { %>
+        <div>
+            <img
+                src="/gallery/normal/<%= photo.file_name %>"
+                alt="<%= photo.alt_text %>"
+                style="max-width: 400px;"
+            >
+            <p><%= photo.alt_text %></p>
+        </div>
+		<% }); %>
+	<% } else { %>
+    <p>Galerii on praegu tühi.</p>
+	<% } %>
+</body>
+</html>

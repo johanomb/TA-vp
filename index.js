@@ -36,27 +36,48 @@ app.get('/', async (req, res)=>{
 	const timeNow = dateET.fullTime();
 	let conn;
 	try {
+		let sqlReq = 'SELECT file_name, alt_text FROM galleryphotos WHERE id = (SELECT MAX(id) FROM galleryphotos WHERE privacy = ? AND deleted IS NULL)';
+		const privacy = 3;
 		conn = await mysql.createConnection({
 				host: process.env.DB_HOST,
 				user: process.env.DB_USER,
 				password: process.env.DB_PASS,
 				database: process.env.DB_NAME
 		});
-		let sqlReq = 'SELECT file_name, alt_text FROM galleryphotos WHERE id = (SELECT MAX(id) FROM galleryphotos WHERE privacy = ? AND deleted IS NULL)';
-		const [rows] = await conn.execute(sqlReq, [3]);
-		//console.log('Leitud avalik foto:', rows);
-		const latestPublicPhoto = rows[0];
-		res.render('index', {dateNow: dateNow, timeNow: timeNow, latestPublicPhoto: latestPublicPhoto});
+		
+		const [rows] = await conn.execute(sqlReq, [privacy]);
+
+		let imgAlt = "Avalik foto";
+		let imgFile = 'pic/vp_logo_small.png';
+
+		if (rows.length > 0) {
+			if (rows[0].alt_text !== "") {
+				imgAlt = rows[0].alt_text;
+			}
+
+			imgFile = process.env.GALLERY_NORMAL_URL + rows[0].file_name;
+		}
+		res.render('index', {dateNow: dateNow, timeNow: timeNow, imgFile: imgFile, imgAlt: imgAlt});
 	}
 	catch (err) {
-		console.log('Viga: ' + err);
-		res.render('index');
+		console.log(err);
+		res.render('index', {dateNow: dateNow, timeNow: timeNow, imgFile: 'pic/vp_logo_small.png', imgAlt: 'VP logo'});
 	}
 	finally {
 		if(conn){
 			await conn.end();
 		}
 	}
+});
+
+//sisseloginud kasutajate avaleht
+app.get('/home', (req, res)=>{
+	res.render('home');
+});
+
+//väljalogimine
+app.get('/logout', (req, res)=>{
+	res.redirect('/');
 });
 
 app.get('/vanasona', async (req, res)=>{
@@ -91,7 +112,15 @@ app.use('/eestifilm', eestifilmRouter);
 const galleryPhotoUploadRouter = require('./routes/galleryPhotoUploadRoutes')
 app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 
-const fotogaleriiRouter = require('./routes/fotogaleriiRoutes')
-app.use('/fotogalerii', fotogaleriiRouter);
+const galleryRouter = require('./routes/galleryRoutes')
+app.use('/gallery', galleryRouter);
+
+//kasutajakonto loomise marsruut
+const signupRouter = require('./routes/signupRoutes')
+app.use('/signup', signupRouter);
+
+//sisselogimise marsruut
+const signinRouter = require('./routes/signinRoutes')
+app.use('/signin', signinRouter);
 
 app.listen(5111);

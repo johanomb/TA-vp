@@ -16,3 +16,4 @@ Johanna, esmaspäev, 12. oktoober 2026, kell 12:59:55;
 Johanna, reede, 16. oktoober 2026, kell 18:34:01;
 Johanna, reede, 16. oktoober 2026, kell 21:21:51;
 Johanna, laupäev, 17. oktoober 2026, kell 09:57:23;
+Johanna, pühapäev, 15. november 2026, kell 22:10:35;

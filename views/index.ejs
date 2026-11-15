@@ -12,17 +12,15 @@
 	<hr>	
 	<p>Lehe avamise aeg: <%= dateNow %> <%= timeNow %>.</p>
 	<ul>
+		<li><a href="/signup">Kasutajakonto loomine</a></li>
+		<li><a href="/signin">Logi sisse</a></li>
+		<br>
 		<li><a href="/vanasona">Tänane vanasõna</a></li>
 		<li><a href="/marsruut">Uus marsruut!</a></li>
 		<li><a href="/regvisit">Külastuse registreerimine</a></li>
 		<li><a href="/eestifilm">Eesti film</a></li>
-		<li><a href="/galleryPhotoUpload">Galeriipiltide üleslaadimine</a></li>
-		<li><a href="/fotogalerii">Fotogalerii pildid</a></li>
 	</ul>
-	<hr>
-	<% if (latestPublicPhoto) { %>
-		<img src="./gallery/normal/<%= latestPublicPhoto.file_name %>" alt="<%= latestPublicPhoto.alt_text %>">
-	<p><%= latestPublicPhoto.alt_text || 'Uusim avalik foto' %></p>
-	<% } %>
+	<h2>Uusim avalik foto</h2>
+    <img src="<%= imgFile %>" alt="<%= imgAlt %>">
 </body>
 </html>

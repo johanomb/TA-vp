@@ -2,6 +2,8 @@ const mysql = require('mysql2/promise');
 const fs = require('fs').promises;
 const sharp = require('sharp');
 
+const watermarkFile = "./public/pic/vp_logo_small.png";
+
 //@desc home page for uploading gallery photos
 //@route GET /galleryPhotoUpload
 //@access public
@@ -19,14 +21,36 @@ const galleryPhotoUploadPost = async (req, res) => {
 	try {
 		//genereerime oma failinime
 		const fileName = 'vp_' + Date.now() + '.jpg';
-		const originalPath = process.env.UPLOAD_ORIGINAL_PATH;
-		const resizedPath = process.env.UPLOAD_RESIZED_PATH;
-		const thumbnailPath = process.env.UPLOAD_THUMBNAIL_PATH;
+		
+		const originalPath = process.env.GALLERY_ORIGINAL;
+		const resizedPath = process.env.GALLERY_NORMAL;
+		const thumbnailPath = process.env.GALLERY_THUMBNAIL;
+		
+		await fs.rename(req.file.path, originalPath + fileName);
+		
+		//kontrollin, kas vesimärgi fail on olemas
+		const watermarkSettings = [{
+			input: watermarkFile,
+			gravity: "southeast"
+		}];
+		if (!await fs.access(watermarkFile).then(() => true).catch(() => false)) {
+             //console.log("Vesimärgi faili ei leitud!");
+             // Tühjendame seaded, et vesimärki ei proovitaks lisada
+             watermarkSettings.length = 0; 
+        }
 
-		await fs.rename(req.file.path, originalPath + fileName)
-		//pildi suuruse muutmine (max 800 laius X 600)
-		await sharp(originalPath + fileName).resize(800, 600).jpeg({quality: 90}).toFile(resizedPath + fileName);
-
+		//pildi suuruse muutmine (max 800 X 600)
+		/* await sharp(req.file.path, originalPath + fileName).resize(800, 600).jpeg({quality: 90}).toFile('./public/gallery/normal/' + fileName); */
+		
+		//await sharp(req.file.destination + fileName).resize(800, 600).jpeg({quality: 90}).toFile('./public/gallery/normal/' + fileName);
+		let normalImageProcessor = await sharp(originalPath + fileName).resize(800, 600).jpeg({quality: 90});
+		//lisan vesimärgi
+		//console.log("Lisan vesimärgi" + watermarkSettings.length);    
+        if (watermarkSettings.length > 0) {
+            normalImageProcessor = await normalImageProcessor.composite(watermarkSettings);
+        }
+		await normalImageProcessor.toFile(resizedPath + fileName);
+				
 		//teeme pisipildi (100 X 100)
 		await sharp(originalPath + fileName).resize(100, 100).jpeg({quality: 90}).toFile(thumbnailPath + fileName);
 

@@ -6,6 +6,10 @@ const bodyparser = require('body-parser');
 const mysql = require('mysql2/promise');
 //moodul .env faili lugemiseks, keskkonnamuutujate parsimiseks
 require('dotenv').config();
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+
+const checkLogin = require('./src/checkLogin');
 const dateET = require('./src/dateTimeET');
 
 const textRef = 'public/txt/vanasonad.txt';
@@ -13,6 +17,28 @@ const regTextRef = 'public/txt/visits.txt';
 
 //käivitan express.js funktsiooni ja annan nimeks "app"
 const app = express();
+//võtan kasutusele sessiooni
+/* app.use(session({
+	secret: process.env.SES_SECRET,
+	saveUninitialized: false,
+	resave: false
+})); */
+const sessionStore = new MySQLStore({
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS,
+	database: process.env.DB_NAME
+});
+app.use(session({
+	secret: process.env.SES_SECRET,
+	store: sessionStore,
+	saveUninitialized: false,
+	resave: false,
+	cookie: {
+		maxAge: 1000 * 60 * 60 * 1 //sessiooni küpsiste aegumisaeg, tund aega
+	}
+}));
+
 //määrame veebilehtedele mallide renderdamise mootori
 app.set('view engine', 'ejs');
 //määran ühe päris kataloogi virtuaalses serveris kättesaadavaks
@@ -71,7 +97,7 @@ app.get('/', async (req, res)=>{
 });
 
 //sisseloginud kasutajate avaleht
-app.get('/home', (req, res)=>{
+app.get('/home', checkLogin.isLogin, (req, res)=>{
 	res.render('home');
 });
 
@@ -96,10 +122,6 @@ app.get('/marsruut', (req, res)=>{
 	res.render('marsruut');
 });
 
-//filmide osasse peab lisama uue lehe mis võimaldab seoseid teha. loeb inimesed, filmid, ametid ja võimaldab ka uue seose sinna tabelisse kirjutada. peab ka lisama kontrolli enne salvestamist, et kas täpselt sama seos on juba olemas.
-//isikuid jms peab saama valida rippmenüüst, select oma seoste .ejs failis. ja seoste põhjal tuleks neid ka eraldi lehel näidata.
-
-
 //Külastuse marsruudid
 const külastusRouter = require('./routes/külastusRoutes');
 app.use('/regvisit', külastusRouter);
@@ -114,6 +136,9 @@ app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 
 const galleryRouter = require('./routes/galleryRoutes')
 app.use('/gallery', galleryRouter);
+
+const personalGalleryRouter = require('./routes/personalGalleryRoutes')
+app.use('/personalGallery', personalGalleryRouter);
 
 //kasutajakonto loomise marsruut
 const signupRouter = require('./routes/signupRoutes')

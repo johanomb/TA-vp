@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Johanna Nomberg, veebiprogrammeerimine</title>
+	<link rel="stylesheet" href="/style/gallery.css">
+	<script src="/script/gallery.js" defer></script>
+</head>
+<body>
+	<img src="../pic/veebiprogrammeerimine_2026_TA.png" alt="">	
+	<h1>Isiklik fotogalerii</h1>
+	<p>Siin on näha salvestatud fotosid.</p>
+	<p>Sisse logitud kasutaja: <%=firstname%>.</p>
+	<hr>	
+	<ul>
+		<li><a href="/home">Avalehele</a></li>
+		<li><a href="/logout">Logi välja</a></li>
+	</ul>
+	<hr>
+	<dialog id="modal" class="modalarea">
+		<span id="modalClose" class="modalclose">&times;</span>
+		<div class="modalhorizontal">
+			<div class="modalvertical">
+				<p id="modalCaption"></p>
+				<img id="modalImage" src="../pic/empty.png" alt="galeriipilt">
+				<p id="modalPrivacy"></p>
+			</div>
+		</div>
+	</dialog>
+	
+	<div id="gallery" class="gallery">
+		<% galleryData.forEach(function(image){ %>
+		  <img src="<%=imagehref + image.src%>" alt="<%=image.alt%>" class="thumbs" data-id="<%=image.id%>" data-file_name="<%=image.src%>" data-privacy="<%=image.privacy%>">
+		<% }); %>
+	</div>
+</body>
+</html>

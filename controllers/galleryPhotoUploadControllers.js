@@ -6,14 +6,14 @@ const watermarkFile = "./public/pic/vp_logo_small.png";
 
 //@desc home page for uploading gallery photos
 //@route GET /galleryPhotoUpload
-//@access public
+//@access private
 const galleryPhotoUpload = (req, res) => {
 	res.render('galleryPhotoUpload');
 };
 
 //@desc home page for uploading gallery photos
 //@route POST /galleryPhotoUpload
-//@access public
+//@access private
 const galleryPhotoUploadPost = async (req, res) => {
 	console.log(req.body);
 	console.log(req.file);
@@ -55,7 +55,9 @@ const galleryPhotoUploadPost = async (req, res) => {
 		await sharp(originalPath + fileName).resize(100, 100).jpeg({quality: 90}).toFile(thumbnailPath + fileName);
 
 		let sqlReq = 'INSERT INTO galleryphotos (file_name, orig_name, alt_text, privacy, user_id) VALUES (?, ?, ?, ?, ?)';
-		const userId = 1; //see on ajutine, kuni päris kasutajakontod teeme
+		//const userId = 1; //see on ajutine, kuni päris kasutajakontod teeme
+		const userId = req.session.userId;
+		
 		conn = await mysql.createConnection({
 			host: process.env.DB_HOST,
 			user: process.env.DB_USER,
